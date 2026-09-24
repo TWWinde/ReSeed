@@ -1,0 +1,77 @@
+diff --git a/scripts/inference/video_model_inference.py b/scripts/inference/video_model_inference.py
+index 095710b..4849d4b 100644
+--- a/scripts/inference/video_model_inference.py
++++ b/scripts/inference/video_model_inference.py
+@@ -58,6 +58,7 @@ from __future__ import annotations
+ 
+ import argparse
+ import gc
++import os
+ import time
+ from pathlib import Path
+ from typing import TYPE_CHECKING, Optional, Sequence
+@@ -566,6 +567,29 @@ def main(args, config: BaseConfig):
+     )
+     ctx = {"dtype": model.precision, "device": model.device}
+ 
++    # [dfd-eval] Opt-in ReSeed adapter: FASTGEN_RESEED_ADAPTER=<checkpoint dir>.
++    # Loading is RNG-free (torch.zeros, load_state_dict, hook registration), so
++    # the noise drawn further down is bit-identical with or without it. The
++    # gate keeps the bias active for the first student step only.
++    reseed_info = None
++    if os.environ.get("FASTGEN_RESEED_ADAPTER") and student is not None:
++        from evaluation.reseed.adapter import FirstStepGate, load_wan_residual_bias_adapter
++
++        _adapter, _payload = load_wan_residual_bias_adapter(student.transformer, os.environ["FASTGEN_RESEED_ADAPTER"])
++        _adapter.to(model.device)
++        _t_list = [float(t) for t in model.config.sample_t_cfg.t_list]
++        if [round(float(t), 6) for t in _payload["t_list"]] != [round(t, 6) for t in _t_list]:
++            raise RuntimeError(f"ReSeed adapter trained for t_list={_payload['t_list']}, config has {_t_list}")
++        if str(_payload.get("student_checkpoint", "")) and str(_payload["student_checkpoint"]) != str(args.ckpt_path):
++            logger.warning(f"ReSeed adapter was fitted on {_payload['student_checkpoint']} but is being applied to {args.ckpt_path}")
++        _gate = FirstStepGate(_adapter, _t_list[0], _t_list[1]).install(student)
++        reseed_info = {
++            "path": os.environ["FASTGEN_RESEED_ADAPTER"], "step": _payload.get("step"),
++            "blocks": list(_payload["blocks"]), "active_above_t": _gate.threshold,
++            "fitted_on": _payload.get("student_checkpoint"), **_adapter.statistics(),
++        }
++        logger.info(f"ReSeed adapter installed: {reseed_info}")
++
+     # Check if we have at least one valid sampling path
+     has_teacher_sampling = teacher is not None and hasattr(teacher, "sample")
+     has_student_sampling = student is not None and hasattr(model, "generator_fn")
+@@ -595,6 +619,24 @@ def main(args, config: BaseConfig):
+         **ctx,
+     )
+ 
++    # [dfd-eval] Opt-in, behaviour-neutral probe: it reads `noise` after it has
++    # been drawn, consumes no RNG and leaves the tensor untouched. With
++    # FASTGEN_EVAL_PROBE unset this block does nothing.
++    probe = None
++    if os.environ.get("FASTGEN_EVAL_PROBE"):
++        from evaluation.tools.eval_probe import EvalProbe
++
++        probe = EvalProbe(os.environ["FASTGEN_EVAL_PROBE"])
++        probe.note("trainer_seed", int(config.trainer.seed))
++        probe.note("effective_seed", int(seed))
++        probe.note("student_sample_steps", int(model.config.student_sample_steps))
++        probe.note("student_sample_type", str(model.config.student_sample_type))
++        probe.note("t_list", list(model.config.sample_t_cfg.t_list))
++        probe.note("input_shape", list(config.model.input_shape))
++        probe.note("ckpt_iter", None if ckpt_iter is None else int(ckpt_iter))
++        probe.note("reseed_adapter", reseed_info)
++        probe.record("initial_noise", noise)
++
+     for i, prompt in enumerate(pos_prompt_set):
+         logger.info(f"[{i+1}/{len(pos_prompt_set)}] Generating: {prompt[:80]}...")
+ 
+@@ -606,6 +648,9 @@ def main(args, config: BaseConfig):
+             ):
+                 condition = basic_utils.to(model.net.text_encoder.encode(condition), **ctx)
+ 
++        if probe is not None and i == 0:
++            probe.record("text_embedding_prompt0", condition, prompt=prompt)
++
+         # VACE Wan mode: depth-to-video conditioning
+         is_net_v2v = hasattr(model.net, "prepare_vid_conditioning")
+         if source_video_paths is not None and i < len(source_video_paths) and is_net_v2v:

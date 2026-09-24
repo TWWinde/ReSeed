@@ -1,0 +1,39 @@
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# environments
+.venv/
+venv/
+env/
+
+# run artifacts (never commit weights, generated media, or scored outputs)
+outputs/
+runs/
+evaluations/
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.png
+*.jpg
+*.jpeg
+*.mp4
+*.gif
+*.npy
+*.npz
+
+# logs
+*.log
+slurm-*.out
+*.out
+
+# OS
+.DS_Store

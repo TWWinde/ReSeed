@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "name": "coco2017_val1k_1024_sd35m_seeded_v1",
+  "dataset": "MS-COCO 2017 validation",
+  "selection": "Deterministic first 1,000 rows of the pinned COCO2017 val5K prompt bank",
+  "prompt_csv": "evaluation-study generated coco2017_val_nested_1k.csv",
+  "prompt_csv_sha256": "1a45411ed112e737ec2950d327b7c0a0f6fc1360b27ec8aed08986ca34f563ed",
+  "model_contract": {
+    "family": "sd3_5_medium",
+    "source_model_id": "stabilityai/stable-diffusion-3.5-medium",
+    "revision": "b940f670f0eda2d07fbb75229e779da1ad11eb80",
+    "model_index_sha256": "b5e97ca0d3c0cd9a1e3ed91a71bbdd489de7941b23fe038b3aaa9acf36fd1543",
+    "scheduler_config_sha256": "677e1ed36ca0de4ac8cc766ca58869e8649673d5f1d47eb8f8aef511a18ae8f7",
+    "transformer_config_sha256": "b6ea8128277df286573ce1937c36ce42a5a84e976331091ffccb1d05893dc299",
+    "vae_config_sha256": "58557f2439dfa867450caef425b5d11160be8aa9c34d60dbf23a94a6a94cb060"
+  },
+  "pairing": {
+    "rule": "same prompt, evaluation_seed, and exact CPU float32 initial latent",
+    "latent_shape": [16, 128, 128],
+    "generation_batch_size": 1
+  },
+  "reference": {
+    "model": "Stable Diffusion 3.5 Medium",
+    "sampler": "native FlowMatchEulerDiscreteScheduler",
+    "steps": 40,
+    "shift": 3.0,
+    "guidance_scale": 4.5,
+    "guidance_mode": "classic CFG without Skip Layer Guidance",
+    "resolution": 1024
+  },
+  "candidate": {
+    "model": "native SD3.5M four-step student",
+    "steps": 4,
+    "shift": 3.0,
+    "guidance_scale": 1.0,
+    "resolution": 1024
+  },
+  "metrics": [
+    "OpenCLIP ViT-H-14 cosine x100",
+    "PickScore raw logit",
+    "HPSv2.1",
+    "LAION-AeS through PyIQA",
+    "standard FID-1K against official COCO2017 validation images"
+  ]
+}

@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reseed"
+version = "0.1.0"
+description = "ReSeed: a first-step residual-bias adapter that restores same-prompt diversity in few-step distilled diffusion students, without retraining them."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Wenwu Tang" }]
+keywords = ["diffusion", "distillation", "diversity", "rectified-flow", "DMD"]
+
+# Runtime deps are intentionally unpinned here; see requirements.txt for the
+# tested versions. torch/diffusers must match your CUDA build, so install those
+# first following the upstream instructions.
+dependencies = [
+    "torch",
+    "diffusers",
+    "transformers",
+    "safetensors",
+    "numpy",
+    "Pillow",
+]
+
+[project.optional-dependencies]
+# scorers used only at evaluation time
+eval = ["open-clip-torch", "pyiqa", "lpips", "pytorch-fid"]
+
+[project.scripts]
+reseed = "reseed.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["reseed*"]

@@ -1,0 +1,9 @@
+{
+  "name": "coco2017_val5k_1024_sd3m_seeded_v1",
+  "benchmark": "MS-COCO 2017 validation, 5000 unique images, one deterministic caption",
+  "resolution": 1024,
+  "latent_shape": [16, 128, 128],
+  "candidate": {"steps": 4, "student_cfg": 1.0, "teacher_cfg": 7.0, "shift": 3.0},
+  "reference": {"steps": 28, "cfg": 7.0, "shift": 3.0},
+  "metrics": ["openclip_vith14_x100", "pickscore_logit", "hpsv2", "laion_aes", "fid_pytorch_fid"]
+}

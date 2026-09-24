@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "name": "coco2017_val5k_sd35m_seeded_v1",
+  "dataset": "MS-COCO 2017 validation",
+  "selection": "5,000 unique image IDs, one deterministic caption per image",
+  "prompt_csv": "/home/dh2121/code/CRRA/legacy/gad/coco2017_val5k.csv",
+  "prompt_csv_sha256": "a4a1d16e09eefabf0ad237eed8e224d684996e85221797cbcf557167c795e7da",
+  "model_contract": {
+    "family": "sd3_5_medium",
+    "source_model_id": "stabilityai/stable-diffusion-3.5-medium",
+    "revision": "b940f670f0eda2d07fbb75229e779da1ad11eb80",
+    "model_index_sha256": "b5e97ca0d3c0cd9a1e3ed91a71bbdd489de7941b23fe038b3aaa9acf36fd1543",
+    "scheduler_config_sha256": "677e1ed36ca0de4ac8cc766ca58869e8649673d5f1d47eb8f8aef511a18ae8f7",
+    "transformer_config_sha256": "b6ea8128277df286573ce1937c36ce42a5a84e976331091ffccb1d05893dc299",
+    "vae_config_sha256": "58557f2439dfa867450caef425b5d11160be8aa9c34d60dbf23a94a6a94cb060"
+  },
+  "pairing": {
+    "rule": "same prompt, evaluation_seed, and exact CPU float32 initial latent",
+    "latent_shape": [16, 64, 64],
+    "latent_hash": "SHA256 of contiguous CPU float32 bytes before device/dtype cast",
+    "generation_batch_size": 1,
+    "note": "This 512x512 SD3.5M protocol is isolated from SD3M and PixArt protocols."
+  },
+  "reference": {
+    "model": "Stable Diffusion 3.5 Medium",
+    "sampler": "native FlowMatchEulerDiscreteScheduler",
+    "steps": 40,
+    "shift": 3.0,
+    "guidance_scale": 4.5,
+    "guidance_mode": "classic CFG without Skip Layer Guidance",
+    "negative_prompt": "",
+    "weight_and_decode_dtype": "bfloat16",
+    "resolution": 512
+  },
+  "candidate": {
+    "model": "native SD3.5M DMD/TDM/GAD-NSP/CRRA student",
+    "sampler": "FlowMatchEulerDiscreteScheduler with explicit unshifted sigmas [1.0, 0.75, 0.5, 0.25]",
+    "steps": 4,
+    "shift": 3.0,
+    "guidance_scale": 1.0,
+    "student_forwards_per_step": 1,
+    "negative_prompt": "",
+    "weight_and_decode_dtype": "bfloat16",
+    "resolution": 512,
+    "effective_shifted_boundaries": [1.0, 0.9, 0.75, 0.5, 0.0]
+  },
+  "metrics": [
+    "OpenCLIP ViT-H-14 cosine x100",
+    "PickScore raw logit",
+    "HPSv2.1",
+    "LAION-AeS through PyIQA",
+    "CleanFID clean mode against official COCO2017 val5K"
+  ],
+  "extended_metric_failure_policy": "isolated subprocess per metric; preserve partial results",
+  "status": "code contract only; no SD3.5M experiment has been run"
+}

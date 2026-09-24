@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "name": "coco2017_val5k_sd3m_seeded_v1",
+  "dataset": "MS-COCO 2017 validation",
+  "selection": "5,000 unique image IDs, one deterministic caption per image",
+  "prompt_csv": "/home/dh2121/code/CRRA/legacy/gad/coco2017_val5k.csv",
+  "pairing": {
+    "rule": "same prompt, evaluation_seed, and exact CPU float32 initial latent",
+    "latent_shape": [16, 64, 64],
+    "latent_hash": "SHA256 of contiguous CPU float32 bytes before device/dtype cast",
+    "note": "This is a distinct SD3M protocol. It must not reuse or be merged with the PixArt 4x64x64 latent bank."
+  },
+  "reference": {
+    "model": "SD3 Medium",
+    "sampler": "native FlowMatchEulerDiscreteScheduler",
+    "steps": 28,
+    "shift": 3.0,
+    "guidance_scale": 7.0,
+    "resolution": 512
+  },
+  "candidate": {
+    "model": "native SD3M CRRA student",
+    "sampler": "FlowMatchEulerDiscreteScheduler with explicit unshifted sigmas [1.0, 0.75, 0.5, 0.25]",
+    "steps": 4,
+    "shift": 3.0,
+    "guidance_scale": 1.0,
+    "student_forwards_per_step": 1,
+    "resolution": 512,
+    "effective_shifted_boundaries": [1.0, 0.9, 0.75, 0.5, 0.0]
+  },
+  "metrics": [
+    "OpenCLIP ViT-H-14 cosine x100",
+    "PickScore raw logit",
+    "HPSv2.1",
+    "LAION-AeS through PyIQA",
+    "CleanFID clean mode against official COCO2017 val5K"
+  ],
+  "extended_metric_failure_policy": "isolated subprocess per metric; preserve partial results",
+  "status": "code contract only; no SD3M generation or metric experiment has been run"
+}

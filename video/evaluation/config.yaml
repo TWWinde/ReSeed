@@ -1,0 +1,160 @@
+# Central configuration for the DMD2 / DFD evaluation.
+#
+# Every number that affects a pixel lives here. Scripts read this file rather
+# than carrying their own defaults, so "what was this run configured with" has
+# exactly one answer.
+#
+# Paths may be absolute, or relative to the repository root. Environment
+# variables of the form ${VAR} and ${VAR:-default} are expanded.
+
+repo_root: "."
+
+paths:
+  # Where download_checkpoints.sh put the released checkpoints.
+  checkpoint_root: "${DFD_CKPT_ROOT:-evaluation/checkpoints}"
+  # HuggingFace cache. NOTE: fastgen passes cache_dir=$HF_HOME directly, not
+  # $HF_HOME/hub, so this must be the same value the jobs export.
+  hf_home: "${HF_HOME:-evaluation/hf_cache}"
+  fastgen_output_root: "${FASTGEN_OUTPUT_ROOT:-evaluation/fastgen_output}"
+  # Empty -> use the interpreter running the script (sys.executable).
+  # A bare "python" does not exist on the compute nodes.
+  python: "${DFD_PYTHON:-}"
+  # VBench lives in its own venv: it pins its own torch and a large
+  # dependency tree, and must not perturb the environment that generates
+  # the videos. Created by evaluation/scripts/install_vbench.sh.
+  vbench_python: "${DFD_VBENCH_PYTHON:-${DFD_ROOT:-.}/venv_vbench/bin/python}"
+
+# The two arms. They differ ONLY in the checkpoint; everything else is shared.
+models:
+  dmd2:
+    checkpoint: "dmd2_t2v_vipe/0001000"
+    step: 1000
+    description: "Released DMD2 baseline (ViPE set)."
+  dfd:
+    checkpoint: "ours_wan_t2v_vipe/0000040"
+    step: 40
+    description: "Released DFD post-trained checkpoint (ViPE set)."
+  # ReSeed arm: the DMD2 checkpoint plus a first-step residual bias fitted by
+  # evaluation/reseed/train_reseed.py. Same weights, same noise, same prompts;
+  # the ONLY difference from `dmd2` is the adapter switched on for step 1.
+  # Skipped by default runs while the adapter path is empty; an explicit
+  # --models dmd2_reseed with an empty/missing path is an error, never a
+  # silent fallback to plain DMD2.
+  # The paper's Teacher row: the undistilled Wan2.1-1.3B through fastgen's own
+  # teacher sampler (UniPC, 50 steps, shift 5, CFG 5.0, the official negative
+  # prompt). Model construction is identical to the student arms, so the
+  # initial noise per seed is bit-identical -- a fully paired comparison.
+  # opt_in: ~105 s per video (100 forwards), 4.5 h on 4 GPUs for 568 videos;
+  # only generated when asked for explicitly.
+  teacher:
+    mode: teacher
+    checkpoint: null
+    step: null
+    num_steps: 50
+    guidance_scale: 5.0
+    opt_in: true
+    description: "Undistilled base model (Table 1 'Teacher'); same noise as the student arms."
+  dmd2_reseed:
+    checkpoint: "dmd2_t2v_vipe/0001000"
+    step: 1000
+    reseed_adapter: "${DFD_RESEED_ADAPTER:-}"
+    description: "DMD2 + ReSeed first-step bias (adapter path from $DFD_RESEED_ADAPTER)."
+
+generation:
+  # Official entry point and config -- do not substitute a reimplementation.
+  inference_script: "scripts/inference/video_model_inference.py"
+  fastgen_config: "fastgen/configs/experiments/WanT2V/config_dmd2.py"
+
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7]
+  # DFD_PROMPT_FILE switches the whole pipeline to another prompt set (see
+  # evaluation/prompts/); pair it with DFD_OUTPUT_ROOT / DFD_RESULTS_ROOT.
+  prompt_file: "${DFD_PROMPT_FILE:-web_dfd_eval_prompts.txt}"
+  num_prompts: null          # null = all; override with --num-prompts
+
+  # web_dfd_eval_prompts.txt has 134 lines but only 71 unique prompts: lines
+  # 72-134 repeat lines 9-71. Because the inference script draws ONE noise
+  # tensor per run and reuses it for every prompt, a duplicated prompt yields a
+  # byte-identical video, which would corrupt any diversity statistic. Keep
+  # this on unless you specifically want the raw file.
+  dedup_prompts: true
+
+  # These mirror fastgen/configs/experiments/WanT2V/config_dmd2.py. They are
+  # NOT passed to the model -- the official config owns that. They are the
+  # contract the generated videos are validated against.
+  num_steps: 4               # student_sample_steps
+  num_frames: 81             # (21 - 1) * 4 + 1
+  resolution: "832x480"      # 104*8 x 60*8
+  fps: 16                    # --fps default
+  t_list: [0.999, 0.937, 0.833, 0.624, 0.0]
+  student_sample_type: "ode"
+  precision: "bfloat16"
+  # The student path applies no CFG: _student_sample_loop never consumes
+  # neg_condition. guidance_scale=5.0 in the config is the TEACHER's scale.
+  student_cfg: null
+
+diversity:
+  num_frames_sampled: 16
+  # The paper says "DINOv2-ViT-Large" and "CLIP-ViT-Large" without naming
+  # checkpoints. These are the canonical public weights for those names; this
+  # is a documented reproduction choice, not a match to something the paper
+  # pinned. See evaluation/results/diversity_summary.md.
+  dino_model: "facebook/dinov2-large"
+  clip_model: "openai/clip-vit-large-patch14"
+  batch_size: 32
+  bootstrap_samples: 2000
+  bootstrap_seed: 0
+
+vbench:
+  # Filled in by run_vbench.sh once VBench is installed; see its README section.
+  dimensions:
+    - subject_consistency
+    - background_consistency
+    - temporal_flickering
+    - motion_smoothness
+    - dynamic_degree
+    - aesthetic_quality
+    - imaging_quality
+  repo: "https://github.com/Vchitect/VBench"
+  commit: null               # recorded at run time
+
+output_root: "${DFD_OUTPUT_ROOT:-evaluation/generated}"
+results_root: "${DFD_RESULTS_ROOT:-evaluation/results}"
+
+# DistillAlign distribution evaluation (arXiv 2607.26811): V-JEPA2 ViT-H
+# features -> teacher-normalized PRDC precision / coverage against the
+# RELEASED Wan2.1-T2V-1.3B teacher reference features, so the teacher arm
+# does not have to be regenerated. The grid is the paper's 16 prompts x 16
+# seeds = 256 videos per arm; the metric CLI refuses any other grid (it hashes
+# (prompt_id, seed, prompt) and the extractor protocol, transformers version
+# included), which is why this stage has its own venv and its own prompt file.
+distillalign:
+  repo_url: "https://github.com/LiJiaxing0213/DistillAlign"
+  commit: "00eac44b8412e0991d1763bc15e50994b4b94b66"
+  repo: "${DFD_DISTILLALIGN_ROOT:-${DFD_ROOT:-.}/distillalign}"
+  python: "${DFD_DISTILLALIGN_PYTHON:-${DFD_ROOT:-.}/venv_distillalign/bin/python}"
+  # Verbatim copy of prompts/distribution_eval_16.txt from the commit above.
+  prompt_file: "evaluation/prompts/distillalign_16.txt"
+  prompt_file_sha256: "085e5b011a034869d4e5c4d9db75459a9d21bd87b05e7674206278abc572f38f"
+  seeds: [11, 22, 33, 42, 44, 55, 66, 77, 88, 123, 456, 789, 2024, 3407, 7777, 9999]
+  # Released reference cache: LiJiaxing/DistillAlign teacher_caches/wan2.1_t2v_1.3b_reference_vjepa2.npz
+  # (Wan2.1-T2V-1.3B, 25 UniPC steps, shift 8, CFG 5, 81 frames; 256 x 2560).
+  teacher_features: "${DFD_ROOT:-.}/distillalign_data/wan2.1_t2v_1.3b_reference_vjepa2.npz"
+  teacher_features_sha256: "a52856c18f4bed08a2ae87071cb36631471da146c4a13e37793e8656b31ec614"
+  # What the reference cache was extracted with. The protocol hash covers all
+  # of these; a mismatch is rejected by `metrics`, not silently compared.
+  encoder_model: "facebook/vjepa2-vith-fpc64-256"
+  encoder_revision: "b5eac8703e3efdc1547fbb6ddfbeb133dc0bdee5"
+  expected_protocol_sha256: "5c9ded5e2dac1a2cad6188153d6449ece64485af214dd5a580c91b7c1eaf7391"
+  expected_sample_keys_sha256: "d15d18526509ab047ef4e270e95013795639a9c12a110bd58f04dbb35c342cd3"
+  pinned:
+    transformers: "4.57.6"
+    torch: "2.6.0+cu124"
+    numpy: "1.26.4"
+  num_frames: 8              # linspace over the first clip_frames decoded frames
+  clip_frames: 81
+  k: 5                       # PRDC k-NN radius
+  # Students are post-DMD generators: raw videos are encoded directly
+  # (the paper's --no-refine protocol); no teacher re-noise refinement.
+  refine: false
+  output_root: "evaluation/generated_distillalign"
+  results_root: "evaluation/results_distillalign"

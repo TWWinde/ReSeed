@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "name": "sd35m1024_diversity_100x10_v1",
+  "dataset": "100 COCO2017-val5K captions x 10 seeds shared prompt/seed bank",
+  "selection": "the existing frequency_checkpoint_diversity_100x10_v1 prompt/seed case list",
+  "prompt_csv": "evaluations/musica_frequency_checkpoint_diversity_100x10_v1/inputs/sd3m_prompt_seed_cases.csv",
+  "prompt_csv_sha256": "1a50e75544f17972487a37154bba24c61b784005b03712cf0a2a1f6821f57360",
+  "model_contract": {
+    "family": "sd3_5_medium",
+    "source_model_id": "stabilityai/stable-diffusion-3.5-medium",
+    "revision": "b940f670f0eda2d07fbb75229e779da1ad11eb80",
+    "model_index_sha256": "b5e97ca0d3c0cd9a1e3ed91a71bbdd489de7941b23fe038b3aaa9acf36fd1543",
+    "scheduler_config_sha256": "677e1ed36ca0de4ac8cc766ca58869e8649673d5f1d47eb8f8aef511a18ae8f7",
+    "transformer_config_sha256": "b6ea8128277df286573ce1937c36ce42a5a84e976331091ffccb1d05893dc299",
+    "vae_config_sha256": "58557f2439dfa867450caef425b5d11160be8aa9c34d60dbf23a94a6a94cb060"
+  },
+  "pairing": {
+    "rule": "same prompt, evaluation_seed, and exact CPU float32 initial latent",
+    "prompt_count": 100,
+    "samples_per_prompt": 10,
+    "image_count": 1000,
+    "base_seed": 2026081900,
+    "seed_recipe": "base_seed + prompt_id * samples_per_prompt + sample_id",
+    "latent_shape": [16, 128, 128],
+    "latent_hash": "SHA256 of contiguous CPU float32 bytes before device/dtype cast",
+    "generation_batch_size": 1,
+    "note": "Same sampler contract as coco2017_val5k_1024_sd35m_seeded_v1; only the prompt/seed bank and image count differ. It exists because the COCO5K protocol fixes exactly 5000 prompts."
+  },
+  "reference": {
+    "model": "Stable Diffusion 3.5 Medium",
+    "sampler": "native FlowMatchEulerDiscreteScheduler",
+    "steps": 40,
+    "shift": 3.0,
+    "guidance_scale": 4.5,
+    "guidance_mode": "classic CFG without Skip Layer Guidance",
+    "negative_prompt": "",
+    "weight_and_decode_dtype": "bfloat16",
+    "resolution": 1024
+  },
+  "candidate": {
+    "model": "native SD3.5M DMD/TDM/GAD-NSP/CRRA student",
+    "sampler": "FlowMatchEulerDiscreteScheduler with explicit unshifted sigmas [1.0, 0.75, 0.5, 0.25]",
+    "steps": 4,
+    "shift": 3.0,
+    "guidance_scale": 1.0,
+    "student_forwards_per_step": 1,
+    "negative_prompt": "",
+    "weight_and_decode_dtype": "bfloat16",
+    "resolution": 1024,
+    "effective_shifted_boundaries": [1.0, 0.9, 0.75, 0.5, 0.0]
+  },
+  "metrics": [
+    "DINOv3 ViT-L/16 per-prompt feature diversity",
+    "CLIP ViT-L/14 per-prompt feature diversity",
+    "LPIPS AlexNet per-prompt pairwise distance"
+  ],
+  "extended_metric_failure_policy": "isolated scorer per metric; preserve partial results"
+}

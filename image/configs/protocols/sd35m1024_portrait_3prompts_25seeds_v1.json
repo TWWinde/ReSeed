@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "name": "sd35m1024_portrait_3prompts_25seeds_v1",
+  "dataset": "three fixed portrait prompts x 25 fixed seeds",
+  "prompt_csv": "configs/evaluation/flux_portrait_3prompts_25seeds_v1.csv",
+  "prompt_csv_sha256": "c0ea31aa56518f53d86a505b5f761bb168521b8442fa510c02ae3467e5315f52",
+  "model_contract": {
+    "family": "sd3_5_medium",
+    "source_model_id": "stabilityai/stable-diffusion-3.5-medium",
+    "revision": "b940f670f0eda2d07fbb75229e779da1ad11eb80"
+  },
+  "pairing": {
+    "rule": "same prompt, evaluation_seed, and exact CPU float32 initial latent",
+    "prompt_count": 3,
+    "samples_per_prompt": 25,
+    "image_count": 75,
+    "latent_shape": [16, 128, 128],
+    "latent_hash": "SHA256 of contiguous CPU float32 bytes before device/dtype cast",
+    "generation_batch_size": 1
+  },
+  "reference": {
+    "model": "Stable Diffusion 3.5 Medium",
+    "sampler": "native FlowMatchEulerDiscreteScheduler",
+    "steps": 40,
+    "shift": 3.0,
+    "guidance_scale": 4.5,
+    "guidance_mode": "classic CFG without Skip Layer Guidance",
+    "negative_prompt": "",
+    "weight_and_decode_dtype": "bfloat16",
+    "resolution": 1024
+  },
+  "candidate": {
+    "model": "native SD3.5-Medium four-step TDM student, with or without DCB",
+    "sampler": "FlowMatchEulerDiscreteScheduler with explicit unshifted sigmas [1.0, 0.75, 0.5, 0.25]",
+    "steps": 4,
+    "shift": 3.0,
+    "guidance_scale": 1.0,
+    "student_forwards_per_step": 1,
+    "negative_prompt": "",
+    "weight_and_decode_dtype": "bfloat16",
+    "resolution": 1024,
+    "effective_shifted_boundaries": [1.0, 0.9, 0.75, 0.5, 0.0]
+  },
+  "purpose": "matched-noise qualitative comparison for teacher, student, and first-step DCB"
+}

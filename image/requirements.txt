@@ -1,0 +1,22 @@
+# Tested image-side environment for ReSeed (SD3-Medium, SD3.5-Medium, SenseFlow-FLUX).
+#
+# Install torch first, matching your CUDA toolkit, from https://pytorch.org .
+# The versions below are the ones the paper experiments were run with; newer
+# diffusers/transformers usually work but change nothing about the method.
+
+torch>=2.1
+diffusers>=0.30
+transformers>=4.44
+safetensors>=0.4
+numpy>=1.24
+Pillow>=10.0
+
+# ---- evaluation scorers (optional; needed only for `reseed score` / `reseed diversity`) ----
+open-clip-torch>=2.24     # CLIP score and CLIP/DINOv3 diversity
+pyiqa>=0.1.10             # LAION aesthetic predictor (laion_aes)
+lpips>=0.1.4              # LPIPS-Alex diversity
+pytorch-fid>=0.3.0        # FID
+# HPSv2.1 is installed from source, not PyPI:
+#   pip install git+https://github.com/tgxs002/HPSv2
+# PickScore (score_clip_pickscore.py) uses transformers' AutoModel/AutoProcessor
+# with the yuvalkirstain/PickScore_v1 weights from the HF hub.
