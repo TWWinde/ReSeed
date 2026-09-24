@@ -104,8 +104,8 @@ see [`video/README.md`](video/README.md).
 
 ## Provenance and license
 
-See [`NOTICE.md`](NOTICE.md). One evaluation script
+Released under the MIT License (see [`LICENSE`](LICENSE)). One evaluation script
 (`image/tools/score_clip_pickscore.py`) is vendored from the MIT-licensed GAD
 project; the video side plugs into (and does not vendor) the Data-Forcing
-Distillation / fastgen stack. A repository-wide license is to be chosen before
-any public release.
+Distillation / fastgen stack. See [`NOTICE.md`](NOTICE.md) for full provenance
+and upstream citations.

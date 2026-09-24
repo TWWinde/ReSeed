@@ -42,7 +42,8 @@ by any code here.
 
 ## License
 
-A repository-wide license has **not** yet been chosen. Add one before any public
-release, and ensure it is compatible with the MIT-licensed vendored scorer above
-and with the upstream terms of any framework you combine this with (DFD/fastgen
-on the video side, Diffusers on the image side).
+This repository is released under the MIT License (see [`LICENSE`](LICENSE)),
+which is compatible with the MIT-licensed vendored scorer above. When combining
+it with other frameworks (DFD/fastgen on the video side, Diffusers on the image
+side), also observe their upstream terms and the licenses of any model weights
+you download.
