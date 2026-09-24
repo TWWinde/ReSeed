@@ -46,12 +46,14 @@ As short clips (play to see the variety): the four-step DMD2 + ReSeed student on
 Wan2.1-T2V draws a **different video for each seed of the same prompt**.
 
 <p align="center">
-  <video src="https://github.com/TWWinde/ReSeed/raw/main/docs/assets/reseed_video_diversity_latte.mp4" controls muted loop width="100%"></video>
+  <img src="docs/assets/reseed_video_diversity_latte.gif" width="100%"
+       alt="Wan2.1-T2V DMD2 + ReSeed, 'pouring latte art' at many seeds — each clip a different pour.">
 </p>
 <p align="center"><em>Prompt: pouring latte art — many seeds, each a different pour.</em></p>
 
 <p align="center">
-  <video src="https://github.com/TWWinde/ReSeed/raw/main/docs/assets/reseed_video_diversity_sparkler.mp4" controls muted loop width="100%"></video>
+  <img src="docs/assets/reseed_video_diversity_sparkler.gif" width="100%"
+       alt="Wan2.1-T2V DMD2 + ReSeed, 'a child with a sparkler at night' at many seeds — each clip a different scene.">
 </p>
 <p align="center"><em>Prompt: a child with a sparkler at night — many seeds, each a different scene.</em></p>
 
