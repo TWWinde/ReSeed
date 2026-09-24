@@ -3,6 +3,15 @@
 **Restoring same-prompt diversity in few-step distilled diffusion models with a
 first-step residual bias — no student retraining.**
 
+<p align="center">
+  <img src="docs/assets/teaser_diversity.png" width="100%"
+       alt="Same prompt, same 25 initial noises. (a) 60-step SD3.5-M teacher; (b) frozen 4-step DMD student collapses to near-identical faces; (c) DMD + ReSeed restores the variety.">
+</p>
+
+<p align="center"><em>Same prompt, same 25 initial noises. The 4-step DMD student (b) collapses to
+near-identical faces; ReSeed (c) restores the teacher's variety (a) — at 4 NFEs,
+without touching the student's weights.</em></p>
+
 A four-step DMD/DMD2/SenseFlow student produces sharp images and videos but
 collapses the variety a prompt should span across different initial noises.
 ReSeed diagnoses that the collapse is decided almost entirely in the **first**
@@ -13,6 +22,24 @@ the frozen teacher's velocity across the same interval. Every base weight stays
 frozen; steps 2–N run the unmodified student; inference cost is essentially
 unchanged (≤ 456 KiB of parameters, +0.14 % latency on video, no extra activation
 memory).
+
+The same collapse-and-recovery holds on **SenseFlow-FLUX** — each 3×3 block is
+one prompt at nine matched seeds (teacher / four-step student / student + ReSeed):
+
+<p align="center">
+  <img src="docs/assets/flux_diversity_grid.jpg" width="100%"
+       alt="FLUX.1-dev, one prompt at nine matched seeds. Left: teacher, varied. Middle: four-step student, nearly identical. Right: student + ReSeed, varied again.">
+</p>
+<p align="center"><em>SenseFlow-FLUX, matched seeds. Left: teacher. Middle: the four-step student
+collapses to one look. Right: ReSeed restores the spread.</em></p>
+
+…and on **Wan2.1-T2V-1.3B** video (each block: teacher / DMD2 student / DMD2 + ReSeed,
+several videos, frames left→right):
+
+<p align="center">
+  <img src="docs/assets/wan_filmstrip.jpg" width="88%"
+       alt="Wan2.1-T2V-1.3B latte-art videos as filmstrips: teacher, DMD2 student, and DMD2 + ReSeed. ReSeed restores per-seed variety the DMD2 student loses.">
+</p>
 
 See [`docs/METHOD.md`](docs/METHOD.md) for the full derivation and the
 diagnostics ReSeed is built on.
