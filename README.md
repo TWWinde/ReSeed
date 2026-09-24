@@ -23,15 +23,16 @@ frozen; steps 2–N run the unmodified student; inference cost is essentially
 unchanged (≤ 456 KiB of parameters, +0.14 % latency on video, no extra activation
 memory).
 
-The same collapse-and-recovery holds on **SenseFlow-FLUX** — each 3×3 block is
-one prompt at nine matched seeds (teacher / four-step student / student + ReSeed):
+The same collapse-and-recovery holds on **SenseFlow-FLUX** — the prompt "a cat
+resting on an open laptop computer" at nine matched seeds, as three 3×3 blocks
+(teacher / four-step student / student + ReSeed):
 
 <p align="center">
   <img src="docs/assets/flux_diversity_grid.jpg" width="100%"
-       alt="FLUX.1-dev, one prompt at nine matched seeds. Left: teacher, varied. Middle: four-step student, nearly identical. Right: student + ReSeed, varied again.">
+       alt="FLUX.1-dev, 'a cat resting on an open laptop computer' at nine matched seeds. Left: teacher, varied poses/framing. Middle: four-step student, nearly identical. Right: student + ReSeed, varied again.">
 </p>
 <p align="center"><em>SenseFlow-FLUX, matched seeds. Left: teacher. Middle: the four-step student
-collapses to one look. Right: ReSeed restores the spread.</em></p>
+collapses to one near-identical pose. Right: ReSeed restores the spread.</em></p>
 
 …and on **Wan2.1-T2V-1.3B** video (each block: teacher / DMD2 student / DMD2 + ReSeed,
 several videos, frames left→right):
