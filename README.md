@@ -1,7 +1,7 @@
 # ReSeed
 
 **Restoring same-prompt diversity in few-step distilled diffusion models with a
-first-step residual bias — no student retraining.**
+first-step tiny bias adapter — no student retraining.**
 
 <p align="center">
   <img src="docs/assets/teaser_diversity.png" width="100%"
