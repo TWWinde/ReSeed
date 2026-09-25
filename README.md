@@ -34,16 +34,8 @@ resting on an open laptop computer" at nine matched seeds, as three 3×3 blocks
 <p align="center"><em>SenseFlow-FLUX, matched seeds. Left: teacher. Middle: the four-step student
 collapses to one near-identical pose. Right: ReSeed restores the spread.</em></p>
 
-…and on **Wan2.1-T2V-1.3B** video (each block: teacher / DMD2 student / DMD2 + ReSeed,
-several videos, frames left→right):
-
-<p align="center">
-  <img src="docs/assets/wan_filmstrip.jpg" width="88%"
-       alt="Wan2.1-T2V-1.3B latte-art videos as filmstrips: teacher, DMD2 student, and DMD2 + ReSeed. ReSeed restores per-seed variety the DMD2 student loses.">
-</p>
-
-As short clips (play to see the variety), each grid shares one prompt across a
-row of seeds, with **top row = teacher, middle row = four-step DMD2 student,
+…and on **Wan2.1-T2V-1.3B** video. Each grid shares one prompt across a row of
+seeds, with **top row = teacher, middle row = four-step DMD2 student,
 bottom row = DMD2 + ReSeed**. The DMD2 row collapses to near-identical clips;
 ReSeed restores the teacher's per-seed variety.
 
