@@ -42,20 +42,22 @@ several videos, frames left→right):
        alt="Wan2.1-T2V-1.3B latte-art videos as filmstrips: teacher, DMD2 student, and DMD2 + ReSeed. ReSeed restores per-seed variety the DMD2 student loses.">
 </p>
 
-As short clips (play to see the variety): the four-step DMD2 + ReSeed student on
-Wan2.1-T2V draws a **different video for each seed of the same prompt**.
+As short clips (play to see the variety), each grid shares one prompt across a
+row of seeds, with **top row = teacher, middle row = four-step DMD2 student,
+bottom row = DMD2 + ReSeed**. The DMD2 row collapses to near-identical clips;
+ReSeed restores the teacher's per-seed variety.
 
 <p align="center">
   <img src="docs/assets/reseed_video_diversity_latte.gif" width="100%"
-       alt="Wan2.1-T2V DMD2 + ReSeed, 'pouring latte art' at many seeds — each clip a different pour.">
+       alt="Wan2.1-T2V, 'pouring latte art' across seeds. Top row: teacher. Middle row: four-step DMD2 student, near-identical. Bottom row: DMD2 + ReSeed, varied again.">
 </p>
-<p align="center"><em>Prompt: pouring latte art — many seeds, each a different pour.</em></p>
+<p align="center"><em>Prompt: pouring latte art. Top row: teacher · middle row: four-step DMD2 student · bottom row: DMD2 + ReSeed.</em></p>
 
 <p align="center">
   <img src="docs/assets/reseed_video_diversity_sparkler.gif" width="100%"
-       alt="Wan2.1-T2V DMD2 + ReSeed, 'a child with a sparkler at night' at many seeds — each clip a different scene.">
+       alt="Wan2.1-T2V, 'a child with a sparkler at night' across seeds. Top row: teacher. Middle row: four-step DMD2 student, near-identical. Bottom row: DMD2 + ReSeed, varied again.">
 </p>
-<p align="center"><em>Prompt: a child with a sparkler at night — many seeds, each a different scene.</em></p>
+<p align="center"><em>Prompt: a child with a sparkler at night. Top row: teacher · middle row: four-step DMD2 student · bottom row: DMD2 + ReSeed.</em></p>
 
 See [`docs/METHOD.md`](docs/METHOD.md) for the full derivation and the
 diagnostics ReSeed is built on.
