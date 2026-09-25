@@ -4,7 +4,7 @@
 first-step tiny bias adapter — no student retraining.**
 
 <p align="center">
-  <img src="docs/assets/teaser_diversity.png" width="100%"
+  <img src="assets/teaser_diversity.png" width="100%"
        alt="Same prompt, same 25 initial noises. (a) 40-step SD3.5-M teacher; (b) frozen 4-step DMD student collapses to near-identical faces; (c) DMD + ReSeed restores the variety.">
 </p>
 
@@ -28,7 +28,7 @@ resting on an open laptop computer" at nine matched seeds, as three 3×3 blocks
 (teacher / four-step student / student + ReSeed):
 
 <p align="center">
-  <img src="docs/assets/flux_diversity_grid.jpg" width="100%"
+  <img src="assets/flux_diversity_grid.jpg" width="100%"
        alt="FLUX.1-dev, 'a cat resting on an open laptop computer' at nine matched seeds. Left: teacher, varied poses/framing. Middle: four-step student, nearly identical. Right: student + ReSeed, varied again.">
 </p>
 <p align="center"><em>SenseFlow-FLUX, matched seeds. Left: teacher. Middle: the four-step student
@@ -40,19 +40,16 @@ bottom row = DMD2 + ReSeed**. The DMD2 row collapses to near-identical clips;
 ReSeed restores the teacher's per-seed variety.
 
 <p align="center">
-  <img src="docs/assets/reseed_video_diversity_latte.gif" width="100%"
+  <img src="assets/reseed_video_diversity_latte.gif" width="100%"
        alt="Wan2.1-T2V, 'pouring latte art' across seeds. Top row: teacher. Middle row: four-step DMD2 student, near-identical. Bottom row: DMD2 + ReSeed, varied again.">
 </p>
 <p align="center"><em>Prompt: pouring latte art. Top row: teacher · middle row: four-step DMD2 student · bottom row: DMD2 + ReSeed.</em></p>
 
 <p align="center">
-  <img src="docs/assets/reseed_video_diversity_sparkler.gif" width="100%"
+  <img src="assets/reseed_video_diversity_sparkler.gif" width="100%"
        alt="Wan2.1-T2V, 'a child with a sparkler at night' across seeds. Top row: teacher. Middle row: four-step DMD2 student, near-identical. Bottom row: DMD2 + ReSeed, varied again.">
 </p>
 <p align="center"><em>Prompt: a child with a sparkler at night. Top row: teacher · middle row: four-step DMD2 student · bottom row: DMD2 + ReSeed.</em></p>
-
-See [`docs/METHOD.md`](docs/METHOD.md) for the full derivation and the
-diagnostics ReSeed is built on.
 
 ## What is in this repository
 
@@ -61,19 +58,17 @@ runtime, because the image and video students live in different frameworks.
 
 ```
 ReSeed/
-├── docs/                     method write-up + the video results report
 ├── image/                    self-contained `reseed` package (SD3-M, SD3.5-M, SenseFlow-FLUX)
 │   ├── src/reseed/           adapters, trainers, flow solver, evaluation, CLI
 │   ├── tools/                generation + diversity/quality scorers
 │   ├── configs/              evaluation protocols (sha-pinned) and prompt banks
-│   ├── slurm/                reference MUSICA launchers (adapt for your cluster)
 │   ├── pyproject.toml        installs the `reseed` package + `reseed` CLI
 │   └── requirements.txt
 └── video/                    ReSeed for Wan2.1-T2V-1.3B, as a plug-in for the
                               Data-Forcing-Distillation (DFD) / fastgen stack
     ├── evaluation/reseed/    adapter, flow, trainer, encode/eval helpers
     ├── evaluation/metrics/   DINOv2/CLIP video diversity math
-    ├── evaluation/tools/     config + probes + report builder
+    ├── evaluation/tools/     config + probes
     └── patches/              the one-file change to the DFD inference entrypoint
 ```
 

@@ -3,7 +3,7 @@
   "name": "sd35m1024_diversity_100x10_v1",
   "dataset": "100 COCO2017-val5K captions x 10 seeds shared prompt/seed bank",
   "selection": "the existing frequency_checkpoint_diversity_100x10_v1 prompt/seed case list",
-  "prompt_csv": "evaluations/musica_frequency_checkpoint_diversity_100x10_v1/inputs/sd3m_prompt_seed_cases.csv",
+  "prompt_csv": "diversity_100x10_prompt_seed_cases.csv",
   "prompt_csv_sha256": "1a50e75544f17972487a37154bba24c61b784005b03712cf0a2a1f6821f57360",
   "model_contract": {
     "family": "sd3_5_medium",
@@ -38,7 +38,7 @@
     "resolution": 1024
   },
   "candidate": {
-    "model": "native SD3.5M DMD/TDM/GAD-NSP/CRRA student",
+    "model": "native SD3.5M DMD/TDM/GAD-NSP student",
     "sampler": "FlowMatchEulerDiscreteScheduler with explicit unshifted sigmas [1.0, 0.75, 0.5, 0.25]",
     "steps": 4,
     "shift": 3.0,

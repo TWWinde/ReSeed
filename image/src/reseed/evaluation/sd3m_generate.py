@@ -106,7 +106,7 @@ SD35M_EVALUATION_CONTRACT = SD3EvaluationContract(
     component_config_sha256=SD35_MEDIUM_CONFIG_SHA256,
     prompt_csv_sha256="a4a1d16e09eefabf0ad237eed8e224d684996e85221797cbcf557167c795e7da",
     protocol_relative_path="configs/protocols/coco2017_val5k_sd35m_seeded_v1.json",
-    protocol_sha256="74e4c0cd927ed376510e4ee5197e0a9c63d360436aea1f331f679b451293d7fb",
+    protocol_sha256="5624d7c52871672bd57fa17e559f99784b060ecac584896533b0d44fca3fe911",
 )
 
 # Native-resolution SD3.5M protocol.  This is an additional, separately named
@@ -119,7 +119,7 @@ SD35M_1024_EVALUATION_CONTRACT = dataclasses.replace(
     evaluation_protocol="coco2017_val5k_1024_sd35m_seeded_v1",
     resolution=1024,
     protocol_relative_path="configs/protocols/coco2017_val5k_1024_sd35m_seeded_v1.json",
-    protocol_sha256="758f373d761b0e0dc58229525374917c0a8e69d0f4486af1e7702eb9e5b7836d",
+    protocol_sha256="b8c8309b2a63ccad91fedfde32b1ac4b375940ed0cfddc669242a596567152e2",
 )
 
 # Shared 100 prompt x 10 seed diversity bank at the same 1024 sampler contract.
@@ -131,7 +131,7 @@ SD35M_1024_DIVERSITY_EVALUATION_CONTRACT = dataclasses.replace(
     expected_prompt_count=1000,
     prompt_csv_sha256="1a50e75544f17972487a37154bba24c61b784005b03712cf0a2a1f6821f57360",
     protocol_relative_path="configs/protocols/sd35m1024_diversity_100x10_v1.json",
-    protocol_sha256="d62650fbdeddbe0ff941d519f93a806e52fd6daf718135c4d485e62a2800c38f",
+    protocol_sha256="99bca9255404b5e0cc6279e881935aa06b5aab4830cf721163d7f765c72ec107",
 )
 
 # Fixed qualitative bank used for the paper's matched-noise portrait panels.
@@ -676,7 +676,7 @@ def _checkpoint_student_identity(checkpoint: Path) -> dict[str, Any]:
     student = checkpoint / "student"
     if not student.is_dir() and (checkpoint / "transformer").is_dir():
         # Externally published students (see tools/wrap_external_sd3m_student.py)
-        # ship a bare ``transformer/`` directory.  Trained CRRA checkpoints keep
+        # ship a bare ``transformer/`` directory.  Locally trained checkpoints keep
         # the ``student/`` layout, so their identity payload is unchanged.
         student = checkpoint / "transformer"
     files = sorted(student.glob("*.safetensors"))
@@ -1499,7 +1499,7 @@ def run_sd3_evaluation(
         args.resolution // vae_scale,
     )
     if checkpoint_manifest is not None and checkpoint_manifest.get("method") == "external":
-        # Externally published students carry no CRRA training contract.  Check
+        # Externally published students carry no local training contract.  Check
         # the sampler the publisher documented instead (see
         # tools/wrap_external_sd3m_student.py), leaving trained checkpoints on
         # the unchanged flow-contract path below.

@@ -3,7 +3,7 @@
   "name": "coco2017_val5k_1024_sd35m_seeded_v1",
   "dataset": "MS-COCO 2017 validation",
   "selection": "5,000 unique image IDs, one deterministic caption per image",
-  "prompt_csv": "legacy/gad/coco2017_val5k.csv",
+  "prompt_csv": "coco2017_val5k.csv",
   "prompt_csv_sha256": "a4a1d16e09eefabf0ad237eed8e224d684996e85221797cbcf557167c795e7da",
   "model_contract": {
     "family": "sd3_5_medium",
@@ -33,7 +33,7 @@
     "resolution": 1024
   },
   "candidate": {
-    "model": "native SD3.5M DMD/TDM/GAD-NSP/CRRA student",
+    "model": "native SD3.5M DMD/TDM/GAD-NSP student",
     "sampler": "FlowMatchEulerDiscreteScheduler with explicit unshifted sigmas [1.0, 0.75, 0.5, 0.25]",
     "steps": 4,
     "shift": 3.0,

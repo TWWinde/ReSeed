@@ -47,6 +47,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -88,7 +89,7 @@ from reseed.trainers._common import (
 )
 
 
-HUB = "/data/fs201205/wt93384/huggingface/hub"
+HUB = os.environ.get("HF_HUB_CACHE", os.path.expanduser("~/.cache/huggingface/hub"))
 DEFAULT_TEACHER = (
     f"{HUB}/models--black-forest-labs--FLUX.1-dev/snapshots/"
     "3de623fc3c33e44ffbe2bad470d0f45bccf2eb21"

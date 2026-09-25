@@ -43,8 +43,8 @@ REPRODUCTION CHOICES (the paper names architectures, not checkpoints):
 Each is recorded in the output JSON so a later reader can see what was assumed.
 
 ADHERENCE (added for the ReSeed comparison): per video, the mean cosine between
-the CLIP text embedding of the prompt and the 16 CLIP frame embeddings. CRRA
-found every diversity-raising intervention pays in compositional accuracy, so
+the CLIP text embedding of the prompt and the 16 CLIP frame embeddings. The image
+experiments found every diversity-raising intervention pays in compositional accuracy, so
 a diversity number without an adherence number next to it is half a result.
 Reported as `clip_text_adherence`; higher = frames match the prompt better.
 """

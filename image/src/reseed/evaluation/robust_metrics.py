@@ -36,13 +36,14 @@ from typing import Any, Iterable, Sequence
 
 SCHEMA_VERSION = 2
 METRICS = ("hps", "aes", "fid")
-DEFAULT_HPS_ROOT = Path("/home/dh2121/code/eval_external/HPSv2")
-DEFAULT_HPS_CHECKPOINT = Path(
-    "/home/dh2121/.cache/huggingface/hub/models--xswu--HPSv2/snapshots/"
-    "697403c78157020a1ae59d23f111aa58ced35b0a/HPS_v2.1_compressed.pt"
-)
-DEFAULT_PYIQA_ROOT = Path("/home/dh2121/code/eval_external/IQA-PyTorch")
-DEFAULT_PYTHON_DEPS = Path("/home/dh2121/code/eval_external/python_deps")
+DEFAULT_HPS_ROOT = Path(os.environ.get("RESEED_HPS_ROOT", "third_party/HPSv2"))
+DEFAULT_HPS_CHECKPOINT = Path(os.environ.get(
+    "RESEED_HPS_CHECKPOINT",
+    os.path.expanduser("~/.cache/huggingface/hub/models--xswu--HPSv2/snapshots/"
+                       "697403c78157020a1ae59d23f111aa58ced35b0a/HPS_v2.1_compressed.pt"),
+))
+DEFAULT_PYIQA_ROOT = Path(os.environ.get("RESEED_PYIQA_ROOT", "third_party/IQA-PyTorch"))
+DEFAULT_PYTHON_DEPS = Path(os.environ.get("RESEED_PYTHON_DEPS", "third_party/python_deps"))
 
 
 def _utc_now() -> str:

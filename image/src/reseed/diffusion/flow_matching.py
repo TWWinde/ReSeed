@@ -1,11 +1,10 @@
-"""Flow-matching trajectory primitives for SD3-family CRRA experiments.
+"""Flow-matching trajectory primitives for SD3-family experiments.
 
 SD3 predicts a velocity field.  Its deterministic Euler transition is
 
     x(next_sigma) = x(sigma) + (next_sigma - sigma) * velocity(x, sigma)
 
-This module deliberately does not import or reuse the epsilon/DDIM helpers in
-``tdm_crra.py``.  The two parameterizations have different model outputs,
+This module deliberately does not import or reuse epsilon/DDIM helpers.  The two parameterizations have different model outputs,
 time coordinates, and transition equations.
 """
 

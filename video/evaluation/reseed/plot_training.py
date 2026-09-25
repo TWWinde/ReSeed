@@ -6,7 +6,7 @@
 
 Prints a table at every saved checkpoint (rolling means, so the noisy per-step
 loss is readable) and writes <run_dir>/training_curves.png. The question this
-answers: has the fit flattened yet? CRRA saw diversity saturate by update
+answers: has the fit flattened yet? The image experiments saw diversity saturate by update
 300-400; if loss and velocity cosine are flat by then, the 2000-step budget is
 not buying anything and the run can be stopped.
 """

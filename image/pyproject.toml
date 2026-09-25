@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "ReSeed: a first-step residual-bias adapter that restores same-prompt diversity in few-step distilled diffusion students, without retraining them."
 readme = "README.md"
 requires-python = ">=3.10"
-authors = [{ name = "Wenwu Tang" }]
+authors = [{ name = "Anonymous Authors" }]
 keywords = ["diffusion", "distillation", "diversity", "rectified-flow", "DMD"]
 
 # Runtime deps are intentionally unpinned here; see requirements.txt for the

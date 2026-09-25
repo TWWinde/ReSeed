@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """First-step residual-bias adapter for Wan transformer blocks (ReSeed, ported).
 
-Port of CRRA's SD3BlockResidualBias to Wan2.1. The SD3 adapter carried an
+Port of the image-side SD3BlockResidualBias to Wan2.1. The SD3 adapter carried an
 image bias and a context bias per joint block because MMDiT updates both
 streams; Wan's blocks are single-stream -- cross-attention reads the text
 embeddings but never writes them back -- so there is exactly one bias per

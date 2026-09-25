@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """ReSeed on Wan2.1: fit a first-step residual bias on a frozen distilled student.
 
-Port of CRRA's sd3m_first_interval_residual_bias.py. Per update, per rank:
+Port of the image-side sd3m_first_interval_residual_bias.py. Per update, per rank:
 
     z ~ N(0, I)                                            [1,16,21,60,104]
     x_end = teacher, m boundary-aligned Euler micro-steps   t0 -> t1, CFG

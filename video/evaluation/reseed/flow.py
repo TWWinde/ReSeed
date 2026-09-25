@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Flow-matching helpers for ReSeed on Wan, in fastgen's own conventions.
 
-The first four functions are ported verbatim in spirit from CRRA's
+The first four functions are ported verbatim in spirit from the image-side
 flow_matching.py (shift_sigma / unshift_sigma / boundary_aligned_teacher_sigmas
 / secant). The last two deliberately do NOT use fastgen's "flow" prediction
 type: every step is expressed through x0 and fastgen's forward_process, so the

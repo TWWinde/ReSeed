@@ -148,9 +148,3 @@ Generators enforce, and record in `generation_protocol.json`:
 
 A mismatch aborts the run rather than silently producing off-protocol samples.
 
-## Reference cluster scripts
-
-`slurm/` holds the original MUSICA launchers for training and evaluating all
-three models (single-seed and 3-seed). They are provided for provenance and as
-templates — the `#SBATCH` headers, `env.sh`, and model paths are site-specific.
-Run them from this `image/` directory. See [`slurm/README.md`](slurm/README.md).

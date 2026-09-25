@@ -39,5 +39,5 @@ slurm-*.out
 .DS_Store
 
 # keep documentation images (README figures) despite the media rules above
-!docs/assets/
-!docs/assets/**
+!assets/
+!assets/**

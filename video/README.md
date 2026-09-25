@@ -11,7 +11,6 @@ We do **not** vendor DFD or fastgen (they carry their own upstream licenses).
 You need a working DFD checkout — `csy2077/data-forcing-distillation` with the
 `fastgen` runtime and the released Wan2.1 DMD2 checkpoint (`dmd2_t2v_vipe/0001000`).
 
-Full results and ablations are in [`../docs/RESULTS_video.md`](../docs/RESULTS_video.md).
 Headline: +46,080 params (0.00325 % of the denoiser), 300 training steps, raises
 video-level DINO diversity from 0.337 to 0.429 on 320 VBench prompts (recovering
 56 % of the teacher gap) with text alignment and VBench quality held at teacher
@@ -31,12 +30,11 @@ video/
 │   │   ├── bench_overhead.py     latency / memory overhead measurement
 │   │   ├── plot_training.py      training-curve plot
 │   │   ├── test_reseed.py        adapter/flow unit checks
-│   │   └── *.sbatch              reference MUSICA launchers
 │   ├── metrics/
 │   │   ├── diversity_math.py     video/per-frame 1 - mean pairwise cosine
 │   │   ├── eval_feature_diversity.py  DINOv2 / CLIP diversity over a results tree
 │   │   └── test_diversity_math.py
-│   ├── tools/                    eval config loader, video probe, seed grid, report
+│   ├── tools/                    eval config loader, video probe, seed grid
 │   ├── generate_multiseed.py     multi-seed generation driver
 │   └── config.yaml               central eval config (paths, arms, sampler)
 └── patches/
@@ -85,8 +83,7 @@ python -m torch.distributed.run --standalone --nproc_per_node=4 \
 
 The paper's working point is **checkpoint-300** (`reseed_runs/.../checkpoint-300/`,
 which holds `residual_biases.pt`). Diversity gains arrive early; the bias
-magnitude keeps growing afterwards, so early stopping matters — see the results
-report.
+magnitude keeps growing afterwards, so early stopping matters.
 
 ## Generate and score
 
@@ -106,11 +103,3 @@ python evaluation/metrics/eval_feature_diversity.py \
 paths. All arms share prompts, seeds, and initial noise; the ReSeed arm differs
 from `dmd2` only by the adapter switched on for step 1.
 
-## Reference cluster scripts
-
-`evaluation/reseed/*.sbatch` are the MUSICA launchers (`train_reseed.sbatch`,
-`eval_reseed.sbatch`, `bench_overhead.sbatch`, …). `eval_reseed.sbatch` calls a
-`run_all.sh` orchestrator that is part of the DFD eval harness (not vendored
-here); the self-contained path above (`generate_multiseed.py` +
-`eval_feature_diversity.py`) reproduces the same numbers. Adapt `#SBATCH`
-headers and the `DFD_ROOT` / `HF_HOME` paths for your site.

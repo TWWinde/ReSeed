@@ -23,7 +23,7 @@ _DEFAULT_PICKSCORE_FALLBACK = (
     "${HF_HOME:-~/.cache/huggingface}/hub/models--yuvalkirstain--PickScore_v1/"
     "snapshots/a4e4367c6dfa7288a00c550414478f865b875800"
 )
-DEFAULT_PICKSCORE = os.environ.get("CRRA_PICKSCORE_MODEL", _DEFAULT_PICKSCORE_FALLBACK)
+DEFAULT_PICKSCORE = os.environ.get("RESEED_PICKSCORE_MODEL", _DEFAULT_PICKSCORE_FALLBACK)
 
 
 def sha256_file(path: Path) -> str:

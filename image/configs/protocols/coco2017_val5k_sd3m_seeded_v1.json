@@ -3,7 +3,7 @@
   "name": "coco2017_val5k_sd3m_seeded_v1",
   "dataset": "MS-COCO 2017 validation",
   "selection": "5,000 unique image IDs, one deterministic caption per image",
-  "prompt_csv": "/home/dh2121/code/CRRA/legacy/gad/coco2017_val5k.csv",
+  "prompt_csv": "coco2017_val5k.csv",
   "pairing": {
     "rule": "same prompt, evaluation_seed, and exact CPU float32 initial latent",
     "latent_shape": [16, 64, 64],
@@ -19,7 +19,7 @@
     "resolution": 512
   },
   "candidate": {
-    "model": "native SD3M CRRA student",
+    "model": "native SD3M distilled student",
     "sampler": "FlowMatchEulerDiscreteScheduler with explicit unshifted sigmas [1.0, 0.75, 0.5, 0.25]",
     "steps": 4,
     "shift": 3.0,

@@ -24,9 +24,9 @@ and ``tools/prompt_lpips_diversity.py`` accept the finalized manifest unchanged:
 every row carries ``prompt_id``, ``sample_id``, ``prompt``, ``evaluation_seed``,
 ``latent_sha256`` and ``image_path``.
 
-Model defaults point at the MUSICA HF cache snapshots and can be overridden
-through ``--dev-model`` / ``--schnell-model`` or the ``CRRA_FLUX_DEV_MODEL`` /
-``CRRA_FLUX_SCHNELL_MODEL`` environment variables.
+Model defaults point at the local Hugging Face cache snapshots (``$HF_HUB_CACHE``)
+and can be overridden through ``--dev-model`` / ``--schnell-model`` or the
+``RESEED_FLUX_DEV_MODEL`` / ``RESEED_FLUX_SCHNELL_MODEL`` environment variables.
 """
 
 from __future__ import annotations
@@ -48,21 +48,21 @@ SHUFFLE_SEED_BASE = 31415926
 MODE = "flux-first-interval-residual-bias"
 BASELINE_MODE = "flux-baseline"
 
-HUB = "/data/fs201205/wt93384/huggingface/hub"
+HUB = os.environ.get("HF_HUB_CACHE", os.path.expanduser("~/.cache/huggingface/hub"))
 DEFAULT_MODEL_PATHS = {
     "dev": os.environ.get(
-        "CRRA_FLUX_DEV_MODEL",
+        "RESEED_FLUX_DEV_MODEL",
         f"{HUB}/models--black-forest-labs--FLUX.1-dev/snapshots/"
         "3de623fc3c33e44ffbe2bad470d0f45bccf2eb21",
     ),
     "schnell": os.environ.get(
-        "CRRA_FLUX_SCHNELL_MODEL",
+        "RESEED_FLUX_SCHNELL_MODEL",
         f"{HUB}/models--black-forest-labs--FLUX.1-schnell/snapshots/"
         "741f7c3ce8b383c54771c7003378a50191e9efe9",
     ),
     "senseflow": os.environ.get(
-        "CRRA_SENSEFLOW_FLUX_TRANSFORMER",
-        "/data/fs201205/wt93384/models/SenseFlow/SenseFlow-FLUX",
+        "RESEED_SENSEFLOW_FLUX_TRANSFORMER",
+        "models/SenseFlow/SenseFlow-FLUX",
     ),
 }
 DEFAULT_STEPS = {"dev": 28, "schnell": 4, "senseflow": 4}
