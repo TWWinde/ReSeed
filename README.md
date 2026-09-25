@@ -5,7 +5,7 @@ first-step tiny bias adapter — no student retraining.**
 
 <p align="center">
   <img src="assets/teaser_diversity.png" width="100%"
-       alt="Same prompt, same 25 initial noises. (a) 40-step SD3.5-M teacher; (b) frozen 4-step DMD student collapses to near-identical faces; (c) DMD + ReSeed restores the variety.">
+       alt="Same prompt, same 25 initial noises. (a) SD3.5-M teacher, 40 steps (80 NFEs); (b) frozen 4-step DMD student collapses to near-identical faces; (c) DMD + ReSeed restores the variety.">
 </p>
 
 <p align="center"><em>Same prompt, same 25 initial noises. The 4-step DMD student (b) collapses to
