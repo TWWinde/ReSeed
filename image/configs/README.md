@@ -1,9 +1,8 @@
 # Evaluation protocols and prompt banks
 
-The generators are contract-driven: a run names an `--evaluation-protocol`, and
-the matching JSON here is verified by SHA-256 before any image is drawn. Each
-protocol pins the dataset, the prompt-CSV hash, and (for SD3.5-Medium) the model
-revision and component-config hashes.
+The SD3 generators use `--evaluation-protocol` to select a configuration.
+Each configuration records the dataset, prompt-CSV hash, and, for
+SD3.5-Medium, the model revision and component configuration hashes.
 
 ## Protocols (`protocols/`)
 
@@ -18,18 +17,18 @@ revision and component-config hashes.
 | `sd35m1024_portrait_3prompts_25seeds_v1.json` | Figure 1 portraits, 40-step teacher |
 | `sd35m1024_portrait_3prompts_25seeds_teacher60_v1.json` | Figure 1 portraits, 60-step teacher |
 
-## The prompt CSVs are not vendored
+## External prompt CSVs
 
 Each protocol references an external `prompt_csv` (the actual COCO-2017
-validation captions and per-case seeds) by path and SHA-256. Those CSVs are
-large and derived from COCO, so they are **not** committed here. To reproduce:
+validation captions and per-case seeds) by path and SHA-256. These CSVs are
+not included in this repository. Reproducing the fixed protocols requires the
+exact referenced files, including their caption selection, order, and seeds;
+an arbitrary COCO subset will not match the recorded hash.
 
-1. Build the caption/seed CSV from COCO-2017-val so its SHA-256 matches the
-   `prompt_csv_sha256` in the protocol (the diversity bank is the first 100
-   captions of COCO-2017-val5k with 10 seeds each; the quality banks are the
-   first 1k / 5k with one seed each).
-2. Point the generator's `--prompts` at the protocol JSON; it resolves and hashes
-   the CSV, and aborts on any mismatch.
+Place the matching CSV at the path specified by `prompt_csv`, relative to
+the protocol JSON. Pass that JSON to the generator's `--prompts` option.
+The generator checks the CSV hash and stops on a mismatch. The JSON files
+alone do not provide the complete evaluation prompt banks.
 
 ## Prompt banks (`evaluation/`)
 

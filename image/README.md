@@ -1,9 +1,11 @@
 # ReSeed — image models
 
-Self-contained `reseed` package for fitting and evaluating the first-step
-residual-bias adapter on **SD3-Medium**, **SD3.5-Medium**, and
-**SenseFlow-FLUX**. The distilled students are frozen inputs; ReSeed trains only
-the per-block bias that is switched on for the first denoising step.
+Training, generation, and evaluation code for **SD3-Medium**,
+**SD3.5-Medium**, and **SenseFlow-FLUX**. ReSeed trains per-block residual
+biases while keeping the distilled student frozen. The biases are active
+only during the first denoising step.
+
+[Paper](https://arxiv.org/abs/2610.37110) · [Project page](https://twwinde.github.io/reseed-project-page/)
 
 ## Install
 
@@ -16,8 +18,8 @@ pip install -e ".[eval]"  # + open-clip, pyiqa, lpips, pytorch-fid for scoring
 Install `torch` first from https://pytorch.org matching your CUDA build.
 HPSv2.1 is installed separately: `pip install git+https://github.com/tgxs002/HPSv2`.
 
-Every stage is reachable through the `reseed` CLI (`python -m reseed --help`) or
-by calling the underlying module/script directly — they are equivalent.
+Use the `reseed` CLI (`python -m reseed --help`) or run the corresponding
+module or script directly.
 
 ```
 reseed train    sd3m | flux
@@ -51,8 +53,8 @@ PickScore, MIT, vendored from GAD), `prune_completed_evaluation_images.py`.
 
 ## 1. Train the bias adapter
 
-The adapter is a per-block bias fitted so the student's first-step velocity
-matches seven frozen-teacher Euler micro-steps across the first interval. The
+The adapter matches the student's first-step velocity to the teacher's
+average velocity over the first interval, computed with seven Euler microsteps. The
 paper uses global batch 4, seeds 42/43/44, and reports checkpoints at 1,900
 (SD3-M), 2,100 (SD3.5-M), and 2,000 (FLUX) updates.
 
@@ -74,24 +76,32 @@ torchrun --standalone --nproc_per_node=4 -m reseed.trainers.sd3m_first_interval_
 **SenseFlow-FLUX** — build the teacher-target cache once, then train:
 
 ```bash
-# cache phase (writes teacher first-interval targets)
-python -m reseed.trainers.flux_first_interval_residual_bias \
-    --teacher-model $FLUX_DEV --student-transformer-model $SENSEFLOW \
+# cache phase (writes teacher first-interval targets for all four ranks)
+torchrun --standalone --nproc_per_node=4 -m reseed.trainers.flux_first_interval_residual_bias \
+    --teacher-model $FLUX_DEV --student-model $FLUX_DEV \
+    --student-transformer-model $SENSEFLOW \
     --prompt-file prompts.txt --teacher-target-cache cache/seed42 \
-    --resolution 1024 --build-cache-only --seed 42
+    --resolution 1024 --max-steps 2000 --batch-size 1 --build-cache-only --seed 42
 
 # train against the cache
 torchrun --standalone --nproc_per_node=4 -m reseed.trainers.flux_first_interval_residual_bias \
-    --teacher-model $FLUX_DEV --student-transformer-model $SENSEFLOW \
+    --teacher-model $FLUX_DEV --student-model $FLUX_DEV \
+    --student-transformer-model $SENSEFLOW \
     --prompt-file prompts.txt --teacher-target-cache cache/seed42 \
-    --output runs/flux_seed42 --double-blocks all --single-blocks all \
-    --max-steps 3000 --batch-size 1 --seed 42 --save-every 100 --resume
+    --output runs/flux_seed42 \
+    --max-steps 2000 --batch-size 1 --seed 42 --save-every 100
 ```
+
+Omitting `--double-blocks` and `--single-blocks` selects all blocks. To resume
+training, pass `--resume-from-checkpoint <checkpoint-directory>`; `--resume`
+only skips existing records during cache construction.
+Build and train with the same process count, prompt file, batch size, seed,
+and number of steps; cache files are indexed by rank and step.
 
 ## 2. Generate with the adapter (first step only)
 
-The generators run a base teacher arm and student arms under the same protocol,
-prompts, and latents. Give a student `--mode` (e.g. `sd35m-dmd`) and switch on
+The generators support teacher and student samples with shared prompts and
+initial latents. Set the student's `--mode` (e.g. `sd35m-dmd`) and enable
 ReSeed with `--first-interval-residual-bias-checkpoint`; leaving that flag off
 reproduces the bare student.
 
@@ -146,5 +156,5 @@ Generators enforce, and record in `generation_protocol.json`:
 - that a student checkpoint's declared reference inference-step count matches
   the protocol's `base_inference_steps`.
 
-A mismatch aborts the run rather than silently producing off-protocol samples.
+A mismatch stops generation with an error.
 

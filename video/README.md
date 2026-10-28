@@ -1,20 +1,22 @@
 # ReSeed — video (Wan2.1-T2V-1.3B)
 
-ReSeed for the released **DFD / DMD2 four-step Wan2.1-T2V-1.3B** student. The
-method is identical to the image side — a zero-initialised per-block residual
-bias, active only on the first student step, fitted so the student's first-step
-velocity matches the teacher across the first interval — but the student lives
-in the **Data-Forcing-Distillation (DFD) / fastgen** codebase, so this side ships
-as a **plug-in** for a DFD checkout rather than a standalone package.
+ReSeed for the **DFD / DMD2 four-step Wan2.1-T2V-1.3B** student. This code
+integrates with a **Data-Forcing Distillation (DFD) / fastgen** checkout.
+It trains zero-initialized per-block residual biases to match the teacher's
+average velocity over the first interval. The student weights remain frozen,
+and the biases are active only during the first step.
 
-We do **not** vendor DFD or fastgen (they carry their own upstream licenses).
-You need a working DFD checkout — `csy2077/data-forcing-distillation` with the
+[Paper](https://arxiv.org/abs/2610.37110) · [Project page](https://twwinde.github.io/reseed-project-page/)
+
+DFD and fastgen are not included. You need a working DFD checkout
+(`csy2077/data-forcing-distillation`) with the
 `fastgen` runtime and the released Wan2.1 DMD2 checkpoint (`dmd2_t2v_vipe/0001000`).
 
-Headline: +46,080 params (0.00325 % of the denoiser), 300 training steps, raises
-video-level DINO diversity from 0.337 to 0.429 on 320 VBench prompts (recovering
-56 % of the teacher gap) with text alignment and VBench quality held at teacher
-level and +0.14 % inference latency.
+The adapter has 46,080 parameters (0.00325% of the denoiser). At 300 training
+updates, video-level DINO diversity increases from 0.337 to 0.429 on the
+320-prompt evaluation bank, recovering 56% of the gap to the teacher.
+The paper reports the accompanying quality metrics and an inference latency
+increase of 0.14% under its timing setup.
 
 ## What this directory contains
 
@@ -53,16 +55,15 @@ cp -r video/evaluation/tools    $DFD/evaluation/     # merge with existing tools
 cp    video/evaluation/generate_multiseed.py $DFD/evaluation/
 cp    video/evaluation/config.yaml           $DFD/evaluation/
 
-# 2. make the released inference entrypoint ReSeed-aware (one 45-line change)
+# 2. add ReSeed support to the inference entrypoint
 cd $DFD && git apply /path/to/video/patches/video_model_inference.reseed.patch
 ```
 
-The patch adds an **opt-in** block to `scripts/inference/video_model_inference.py`:
+The patch adds optional adapter loading to `scripts/inference/video_model_inference.py`:
 when `FASTGEN_RESEED_ADAPTER=<checkpoint dir>` is set, it loads the adapter and
 installs a first-step gate. Loading is RNG-free (`torch.zeros`, `load_state_dict`,
-hook registration), so the initial noise is bit-identical with or without the
-adapter — every comparison stays paired. Unset, the file behaves exactly as
-upstream.
+hook registration), preserving the initial-noise draw for matched comparisons.
+Without the variable, inference uses the original student.
 
 ## Train
 
@@ -81,9 +82,9 @@ python -m torch.distributed.run --standalone --nproc_per_node=4 \
     - trainer.fsdp=True trainer.ddp=False
 ```
 
-The paper's working point is **checkpoint-300** (`reseed_runs/.../checkpoint-300/`,
-which holds `residual_biases.pt`). Diversity gains arrive early; the bias
-magnitude keeps growing afterwards, so early stopping matters.
+The paper evaluates **checkpoint-300**, which contains `residual_biases.pt`.
+The example above saves intermediate checkpoints up to 2,000 updates; use
+`--max-steps 300` to stop at the reported checkpoint.
 
 ## Generate and score
 

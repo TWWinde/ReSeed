@@ -1,18 +1,15 @@
 # Provenance and third-party notices
 
-This repository was assembled from the ReSeed portions of two research
-codebases, keeping only the four models reported in the paper (SD3-Medium,
-SD3.5-Medium, SenseFlow-FLUX, and the Wan2.1-T2V-1.3B DFD student) and the
-ReSeed adapter itself (training, evaluation, inference). The few-step students
-are treated as frozen, upstream/released checkpoints and are **not** distilled
-by any code here.
+This repository contains ReSeed training, evaluation, and inference code for
+SD3-Medium, SD3.5-Medium, SenseFlow-FLUX, and Wan2.1-T2V-1.3B.
+Teacher and distilled student checkpoints are supplied separately. The code
+trains only ReSeed adapters, not the distilled students.
 
 ## Origin of the code
 
-- **`image/`** — the native `reseed` package (renamed from the internal
-  `unified_distill` package). All shipped modules are the project's own
-  rectified-flow, adapter, trainer, and evaluation implementations. None of the
-  legacy GAD/TDM/PixArt/SDXL trees were carried over.
+- **`image/`** — the `reseed` package, developed from the project's internal
+  `unified_distill` package. It contains flow solvers, adapters, trainers, and
+  evaluation code. The third-party scorer is listed separately below.
 - **`video/`** — the ReSeed additions written on top of the Data-Forcing
   Distillation (DFD) / fastgen stack. This directory is a plug-in: DFD and
   fastgen themselves are **not** vendored here. The one modification to the DFD
