@@ -4,7 +4,10 @@
 
 Wenwu Tang, Dong Wang, Yun Cheng, and Olga Saukh
 
-[Paper](https://arxiv.org/abs/2610.37110) · [Project page](https://twwinde.github.io/reseed-project-page/) · [Image models](image/README.md) · [Video model](video/README.md)
+[![arXiv](https://img.shields.io/badge/arXiv-2610.37110-B31B1B?logo=arxiv&style=flat-square)](https://arxiv.org/abs/2610.37110)
+[![Project Page](https://img.shields.io/badge/%F0%9F%8C%90-Project_Page-1976D2?style=flat-square)](https://twwinde.github.io/reseed-project-page/)
+
+[T2I models](image/README.md) · [T2V model](video/README.md)
 
 ReSeed improves diversity in a frozen, few-step distilled model by training
 small residual biases that are active only in the first denoising step.

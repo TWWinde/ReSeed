@@ -1,4 +1,4 @@
-# ReSeed — video (Wan2.1-T2V-1.3B)
+# ReSeed — T2V model (Wan2.1-T2V-1.3B)
 
 ReSeed for the **DFD / DMD2 four-step Wan2.1-T2V-1.3B** student. This code
 integrates with a **Data-Forcing Distillation (DFD) / fastgen** checkout.
@@ -6,7 +6,8 @@ It trains zero-initialized per-block residual biases to match the teacher's
 average velocity over the first interval. The student weights remain frozen,
 and the biases are active only during the first step.
 
-[Paper](https://arxiv.org/abs/2610.37110) · [Project page](https://twwinde.github.io/reseed-project-page/)
+[![arXiv](https://img.shields.io/badge/arXiv-2610.37110-B31B1B?logo=arxiv&style=flat-square)](https://arxiv.org/abs/2610.37110)
+[![Project Page](https://img.shields.io/badge/%F0%9F%8C%90-Project_Page-1976D2?style=flat-square)](https://twwinde.github.io/reseed-project-page/)
 
 DFD and fastgen are not included. You need a working DFD checkout
 (`csy2077/data-forcing-distillation`) with the

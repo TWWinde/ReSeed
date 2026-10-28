@@ -1,11 +1,12 @@
-# ReSeed — image models
+# ReSeed — T2I models
 
 Training, generation, and evaluation code for **SD3-Medium**,
 **SD3.5-Medium**, and **SenseFlow-FLUX**. ReSeed trains per-block residual
 biases while keeping the distilled student frozen. The biases are active
 only during the first denoising step.
 
-[Paper](https://arxiv.org/abs/2610.37110) · [Project page](https://twwinde.github.io/reseed-project-page/)
+[![arXiv](https://img.shields.io/badge/arXiv-2610.37110-B31B1B?logo=arxiv&style=flat-square)](https://arxiv.org/abs/2610.37110)
+[![Project Page](https://img.shields.io/badge/%F0%9F%8C%90-Project_Page-1976D2?style=flat-square)](https://twwinde.github.io/reseed-project-page/)
 
 ## Install
 
